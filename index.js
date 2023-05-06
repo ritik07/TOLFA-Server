@@ -1,8 +1,7 @@
-const express = require("express"); // framework
+const express = require("express");
 const app = express();
 const cors = require("cors");
-// --------
-const v1Routes = require("./server/v1"); // routes
+const v1Routes = require("./server/v1");
 
 app.use(express.static("file"));
 
@@ -18,13 +17,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-// get -> get data
-// post -> create data
-// put -> update data
-// delelte -> delete data
-
-
-//
 app.use("/api/v1", v1Routes);
 app.use("/", (req, res) => {
   res.send("OK");

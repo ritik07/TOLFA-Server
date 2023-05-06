@@ -22,10 +22,14 @@ exports.getUsers = async (req, res) => {
           success: false,
         });
         return;
-      } else if (result) {
+      } else if (result && result.length) {
         console.log("result of role type data", result);
         const getUserRoles = async () => {
-          await helper.getRolesByUser(result[0].id, res, result);
+          if (id) {
+            await helper.getRolesByUser(result[0].id, res, result);
+          } else {
+            await helper.getAllUser(result[0].id, res, result);
+          }
         };
         getUserRoles();
       }
@@ -42,12 +46,14 @@ exports.getUsers = async (req, res) => {
 exports.createUser = async (req, res, next) => {
   try {
     let { body } = req;
-    let { name, email, phone_no, created_by, updated_by } = body;
+    let { name, email, phone_no, created_by, updated_by, password, role_data } =
+      body;
 
     const statement = `INSERT INTO ${TABLE_NAME} (
       name, 
       email, 
       phone_no,
+      password,
       active,
       created_by,
       updated_by,
@@ -58,6 +64,7 @@ exports.createUser = async (req, res, next) => {
       '${name}', 
       '${email}', 
       '${phone_no}',
+      '${"tolfa@123"}',
        ${true},
        ${created_by},
        ${created_by},
@@ -73,7 +80,11 @@ exports.createUser = async (req, res, next) => {
           success: false,
         });
       } else if (result) {
-        req.body.user_id = result.insertId;
+        let userXrole = [];
+        role_data.map((item) => {
+          userXrole.push([result.insertId, item]);
+        });
+        req.body.userXrole = userXrole;
         next();
       }
     });
@@ -90,7 +101,7 @@ exports.createUser = async (req, res, next) => {
 exports.addRolesToUser = async (req, res) => {
   try {
     let { body } = req;
-    let { role_id, user_id } = body;
+    let { role_id, user_id, userXrole } = body;
     // [[user_id, role_id]]
     let userIdVsRoleId = [
       [1, 1],
@@ -103,7 +114,7 @@ exports.addRolesToUser = async (req, res) => {
       ) 
       VALUES ?`;
 
-    let values = userIdVsRoleId;
+    let values = userXrole;
 
     pool.query(statement, [values], (err, result, fileds) => {
       try {

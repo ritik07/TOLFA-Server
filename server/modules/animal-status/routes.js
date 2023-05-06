@@ -5,12 +5,12 @@ const middlewares = require("./middlewares");
 const router = express.Router();
 
 /* GET */
-router.get("/get", controller.getRoles);
+router.get("/", controller.get);
 /* CREATE */
-router.post("/create", middlewares.duplicateRoleType, controller.createRole);
+router.post("/create", middlewares.duplicateData, controller.create);
 /* UPDATE */
-router.put("/update", controller.updateRoleType);
+router.put("/update", controller.update);
 /* DELETE */
-router.put("/delete/:id", controller.deleteRoleType);
+router.put("/delete", controller.delete);
 
 module.exports = router;

@@ -1,9 +1,21 @@
 const pool = require("../../../database");
-
+const moment = require("moment");
 const TABLE_NAME = "tolfa_rescue_type";
 
 exports.getRescueType = async (req, res) => {
-  const statement = `SELECT * FROM ${TABLE_NAME}`;
+  const statement = `SELECT 
+  @row_number:=@row_number+1 AS serial_no,
+  trt.id as id, 
+  trt.name as name, 
+  itu.name as created_by, 
+  tu.name as updated_by,
+  trt.created_at as created_at,
+  trt.updated_at as updated_at
+  FROM tolfa_rescue_type as trt 
+  INNER JOIN tolfa_user as tu on tu.id = trt.updated_by
+  INNER JOIN tolfa_user as itu on itu.id = trt.created_by, (SELECT @row_number:=0) as rn
+  WHERE trt.active = true
+  ORDER BY trt.id`;
   console.log("statement", statement);
   pool.query(statement, (err, result, fileds) => {
     try {
@@ -36,9 +48,21 @@ exports.getRescueType = async (req, res) => {
 exports.createRescueType = async (req, res) => {
   try {
     let { body } = req;
-    let { name } = body;
+    let { name, created_by } = body;
 
-    const statement = `INSERT INTO ${TABLE_NAME} (name) values('${name}')`;
+    const statement = `INSERT INTO ${TABLE_NAME} (
+      name, 
+      created_by,
+      updated_by,
+      created_at, 
+      updated_at
+      ) values(
+        '${name}',
+        ${created_by},
+        ${created_by},
+        '${moment().format("YYYY-MM-DD HH:mm:ss")}', 
+        '${moment().format("YYYY-MM-DD HH:mm:ss")}'
+        )`;
 
     pool.query(statement, (err, result, fileds) => {
       if (err) {
@@ -70,9 +94,12 @@ exports.createRescueType = async (req, res) => {
 exports.updateRescueType = async (req, res) => {
   try {
     let { body } = req;
-    let { name, id } = body;
+    let { name, id, updated_by } = body;
 
-    const statement = `UPDATE ${TABLE_NAME} set name = '${name}' where id = ${id}`;
+    const statement = `UPDATE ${TABLE_NAME} set 
+    name = '${name}', 
+    updated_by = ${updated_by},
+    updated_at = '${moment().format("YYYY-MM-DD HH:mm:ss")}' where id = ${id}`;
 
     pool.query(statement, (err, result, fileds) => {
       if (err) {

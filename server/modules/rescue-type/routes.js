@@ -5,7 +5,7 @@ const middlewares = require("./middlewares");
 const router = express.Router();
 
 /* GET */
-router.get("/get", controller.getRescueType);
+router.get("/", controller.getRescueType);
 /* CREATE */
 router.post(
   "/create",

@@ -1,4 +1,4 @@
-const express = require("express"); // 
+const express = require("express"); //
 const controller = require("./controller");
 
 const router = express.Router();
@@ -7,5 +7,5 @@ const router = express.Router();
 router.get("/", controller.getTestData);
 
 // router -> 1. path
-    //    -> 2. function
+//    -> 2. function
 module.exports = router;
