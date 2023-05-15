@@ -1,21 +1,21 @@
 const pool = require("../../../database");
 const moment = require("moment");
-const TABLE_NAME = "tolfa_rescue_type";
+const TABLE_NAME = "tolfa_city_area";
 
 exports.get = async (req, res) => {
   const statement = `SELECT 
-  @row_number:=@row_number+1 AS serial_no,
-  trt.id as id, 
-  trt.name as name, 
+  tca.id as id, 
+  tca.name as name, 
   itu.name as created_by, 
   tu.name as updated_by,
-  trt.created_at as created_at,
-  trt.updated_at as updated_at
-  FROM tolfa_rescue_type as trt 
-  INNER JOIN tolfa_user as tu on tu.id = trt.updated_by
-  INNER JOIN tolfa_user as itu on itu.id = trt.created_by, (SELECT @row_number:=0) as rn
-  WHERE trt.active = true
-  ORDER BY trt.id`;
+  tca.created_at as created_at,
+  tca.updated_at as updated_at,
+  ts.name as city_name
+  FROM tolfa_city_area as tca 
+  INNER JOIN tolfa_user as tu on tu.id = tca.updated_by
+  INNER JOIN tolfa_user as itu on itu.id = tca.created_by 
+  INNER JOIN tolfa_city as ts on ts.id = tca.city_id`;
+
   console.log("statement", statement);
   pool.query(statement, (err, result, fileds) => {
     try {
@@ -27,9 +27,9 @@ exports.get = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("result of rescue type data", result);
+        console.log("records found", result);
         res.status(200).json({
-          message: "rescue type data",
+          message: "record found",
           status: 200,
           success: true,
           data: result,
@@ -48,16 +48,18 @@ exports.get = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     let { body } = req;
-    let { name, created_by } = body;
+    let { name, created_by, city_id } = body;
 
     const statement = `INSERT INTO ${TABLE_NAME} (
       name, 
+      city_id,
       created_by,
       updated_by,
       created_at, 
       updated_at
       ) values(
         '${name}',
+        ${city_id},
         ${created_by},
         ${created_by},
         '${moment().format("YYYY-MM-DD HH:mm:ss")}', 
@@ -75,7 +77,7 @@ exports.create = async (req, res) => {
       } else if (result) {
         res.status(200).json({
           status: 200,
-          message: "Rescue type added successfuly",
+          message: "Record added successfuly",
           success: true,
           data: result[0],
         });
@@ -94,10 +96,11 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     let { body } = req;
-    let { name, id, updated_by } = body;
+    let { name, id, updated_by, city_id } = body;
 
     const statement = `UPDATE ${TABLE_NAME} set 
     name = '${name}', 
+    city_id = ${city_id}, 
     updated_by = ${updated_by},
     updated_at = '${moment().format("YYYY-MM-DD HH:mm:ss")}' where id = ${id}`;
 
@@ -112,7 +115,7 @@ exports.update = async (req, res) => {
       } else if (result) {
         res.status(200).json({
           status: 200,
-          message: "Rescue type updated successfuly",
+          message: "Record updated successfuly",
           success: true,
           data: result[0],
         });
@@ -146,7 +149,7 @@ exports.delete = async (req, res) => {
       } else if (result) {
         res.status(200).json({
           status: 200,
-          message: "Rescue type deleted successfuly",
+          message: "Record deleted successfuly",
           success: true,
           data: result[0],
         });

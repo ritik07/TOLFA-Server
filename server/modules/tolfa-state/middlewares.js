@@ -1,18 +1,18 @@
 const pool = require("../../../database");
 
-exports.duplicate = async (req, res, next) => {
+exports.duplicateRescueType = async (req, res, next) => {
   try {
     let { body } = req;
-    let { name } = body;
+    let { name, city_id } = body;
 
-    const statement = `SELECT * FROM tolfa_rescue_type WHERE name = '${name}'`;
+    const statement = `SELECT * FROM tolfa_state WHERE name = '${name}' and city_id = ${city_id}`;
     console.log(statement);
     const query = (statement) => {
       pool.query(statement, (error, results, fields) => {
         console.log("results", results);
         if (results && results.length) {
           res.status(422).json({
-            message: "Rescue type already exist with this name",
+            message: "Data already exist with this name",
           });
         } else {
           next();

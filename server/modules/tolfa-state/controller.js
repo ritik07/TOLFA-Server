@@ -1,21 +1,21 @@
 const pool = require("../../../database");
 const moment = require("moment");
-const TABLE_NAME = "tolfa_rescue_type";
+const TABLE_NAME = "tolfa_state";
 
 exports.get = async (req, res) => {
   const statement = `SELECT 
   @row_number:=@row_number+1 AS serial_no,
-  trt.id as id, 
-  trt.name as name, 
+  ts.id as id, 
+  ts.name as name, 
   itu.name as created_by, 
   tu.name as updated_by,
-  trt.created_at as created_at,
-  trt.updated_at as updated_at
-  FROM tolfa_rescue_type as trt 
-  INNER JOIN tolfa_user as tu on tu.id = trt.updated_by
-  INNER JOIN tolfa_user as itu on itu.id = trt.created_by, (SELECT @row_number:=0) as rn
-  WHERE trt.active = true
-  ORDER BY trt.id`;
+  ts.created_at as created_at,
+  ts.updated_at as updated_at
+  FROM tolfa_state as ts 
+  INNER JOIN tolfa_user as tu on tu.id = ts.updated_by
+  INNER JOIN tolfa_user as itu on itu.id = ts.created_by, (SELECT @row_number:=0) as rn
+  WHERE ts.active = true
+  ORDER BY ts.id`;
   console.log("statement", statement);
   pool.query(statement, (err, result, fileds) => {
     try {
@@ -27,9 +27,9 @@ exports.get = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("result of rescue type data", result);
+        console.log("result of state data", result);
         res.status(200).json({
-          message: "rescue type data",
+          message: "state data",
           status: 200,
           success: true,
           data: result,
@@ -75,7 +75,7 @@ exports.create = async (req, res) => {
       } else if (result) {
         res.status(200).json({
           status: 200,
-          message: "Rescue type added successfuly",
+          message: "state added successfuly",
           success: true,
           data: result[0],
         });
@@ -112,7 +112,7 @@ exports.update = async (req, res) => {
       } else if (result) {
         res.status(200).json({
           status: 200,
-          message: "Rescue type updated successfuly",
+          message: "state updated successfuly",
           success: true,
           data: result[0],
         });
@@ -146,7 +146,7 @@ exports.delete = async (req, res) => {
       } else if (result) {
         res.status(200).json({
           status: 200,
-          message: "Rescue type deleted successfuly",
+          message: "state deleted successfuly",
           success: true,
           data: result[0],
         });

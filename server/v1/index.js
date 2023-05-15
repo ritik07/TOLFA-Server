@@ -6,6 +6,9 @@ const animalStatus = require("../modules/animal-status");
 const breed = require("../modules/breed");
 const role = require("../modules/role");
 const user = require("../modules/user");
+const city = require("../modules/tolfa-city");
+const state = require("../modules/tolfa-state");
+const cityArea = require("../modules/city-area");
 const test = require("../modules/test");
 const auth = require("../modules/auth");
 
@@ -19,6 +22,10 @@ router.use("/species-type", authMiddleware.verifyToken, speciesType);
 
 router.use("/animal-status", authMiddleware.verifyToken, animalStatus);
 router.use("/breed", authMiddleware.verifyToken, breed);
+
+router.use("/city", authMiddleware.verifyToken, city);
+router.use("/state", authMiddleware.verifyToken, state);
+router.use("/city-area", authMiddleware.verifyToken, cityArea);
 
 router.use("/role", authMiddleware.verifyToken, role);
 router.use("/user", user);

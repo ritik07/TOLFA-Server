@@ -7,11 +7,7 @@ const router = express.Router();
 /* GET */
 router.get("/", controller.get);
 /* CREATE */
-router.post(
-  "/create",
-  middlewares.duplicate,
-  controller.create
-);
+router.post("/create", middlewares.duplicate, controller.create);
 /* UPDATE */
 router.put("/update", controller.update);
 /* DELETE */
