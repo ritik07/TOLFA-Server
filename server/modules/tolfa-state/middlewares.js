@@ -1,11 +1,11 @@
 const pool = require("../../../database");
 
-exports.duplicateRescueType = async (req, res, next) => {
+exports.duplicate = async (req, res, next) => {
   try {
     let { body } = req;
     let { name, city_id } = body;
 
-    const statement = `SELECT * FROM tolfa_state WHERE name = '${name}' and city_id = ${city_id}`;
+    const statement = `SELECT * FROM tolfa_state WHERE name = '${name}'`;
     console.log(statement);
     const query = (statement) => {
       pool.query(statement, (error, results, fields) => {

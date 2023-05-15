@@ -3,16 +3,16 @@ const pool = require("../../../database");
 exports.duplicate = async (req, res, next) => {
   try {
     let { body } = req;
-    let { name, state_id } = body;
+    let { name, city_id } = body;
 
-    const statement = `SELECT * FROM tolfa_city WHERE name = '${name}' AND 	state_id = ${state_id}`;
+    const statement = `SELECT * FROM tolfa_area WHERE name = '${name}'`;
     console.log(statement);
     const query = (statement) => {
       pool.query(statement, (error, results, fields) => {
         console.log("results", results);
         if (results && results.length) {
           res.status(422).json({
-            message: "data already exist with this name",
+            message: "Data already exist with this name",
           });
         } else {
           next();

@@ -11,6 +11,6 @@ router.post("/create", middlewares.duplicate, controller.create);
 /* UPDATE */
 router.put("/update", controller.update);
 /* DELETE */
-router.put("/delete", controller.delete);
+router.delete("/delete", controller.delete);
 
 module.exports = router;

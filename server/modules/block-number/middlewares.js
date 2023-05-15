@@ -3,9 +3,9 @@ const pool = require("../../../database");
 exports.duplicate = async (req, res, next) => {
   try {
     let { body } = req;
-    let { name, state_id } = body;
+    let { name, area_id } = body;
 
-    const statement = `SELECT * FROM tolfa_city WHERE name = '${name}' AND 	state_id = ${state_id}`;
+    const statement = `SELECT * FROM tolfa_block_number WHERE name = '${name}' AND 	area_id = ${area_id}`;
     console.log(statement);
     const query = (statement) => {
       pool.query(statement, (error, results, fields) => {

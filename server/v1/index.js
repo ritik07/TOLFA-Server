@@ -9,6 +9,8 @@ const user = require("../modules/user");
 const city = require("../modules/tolfa-city");
 const state = require("../modules/tolfa-state");
 const cityArea = require("../modules/city-area");
+const area = require("../modules/area");
+const blockNumber = require("../modules/block-number");
 const test = require("../modules/test");
 const auth = require("../modules/auth");
 
@@ -26,6 +28,9 @@ router.use("/breed", authMiddleware.verifyToken, breed);
 router.use("/city", authMiddleware.verifyToken, city);
 router.use("/state", authMiddleware.verifyToken, state);
 router.use("/city-area", authMiddleware.verifyToken, cityArea);
+
+router.use("/area", authMiddleware.verifyToken, area);
+router.use("/block-number", authMiddleware.verifyToken, blockNumber);
 
 router.use("/role", authMiddleware.verifyToken, role);
 router.use("/user", user);
