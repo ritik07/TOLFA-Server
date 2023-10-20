@@ -14,8 +14,8 @@ exports.login = async (req, res, next) => {
     try {
       if (result[0].cnt > 0) {
         var token = jwt.sign({ phone_no: phone_no }, secret, {
-          // expiresIn: 86400,
-          expiresIn: 3600,
+          expiresIn: 86400,
+          // expiresIn: 3600,
         });
         res.status(200).json({
           message: "Logged in!",
@@ -31,6 +31,7 @@ exports.login = async (req, res, next) => {
         });
       }
     } catch (error) {
+      console.log("error", error);
       res.status(500).json({
         message: "Ops something went wrong",
         status: 500,

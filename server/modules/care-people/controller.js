@@ -1,22 +1,15 @@
 const pool = require("../../../database");
 const moment = require("moment");
-const TABLE_NAME = "tolfa_species";
+const TABLE_NAME = "tolfa_care_people";
 
 exports.get = async (req, res) => {
-  const statement = `SELECT 
-  ts.id as id, 
-  ts.name as name, 
-  itu.name as created_by, 
-  tu.name as updated_by,
-  ts.created_at as created_at,
-  ts.updated_at as updated_at,
-  trt.name as rescue_type_name,
-  trt.id as rescue_type_id
-  FROM tolfa_species as ts 
-  INNER JOIN tolfa_user as tu on tu.id = ts.updated_by
-  INNER JOIN tolfa_user as itu on itu.id = ts.created_by 
-  INNER JOIN tolfa_rescue_type as trt on trt.id = ts.rescue_type_id`;
-
+  const { mob_no } = req?.query;
+  let statement;
+  if (mob_no) {
+    statement = `Select * from ${TABLE_NAME} where mob_no = ${mob_no}`;
+  } else {
+    statement = `Select * from ${TABLE_NAME}`;
+  }
   console.log("statement", statement);
   pool.query(statement, (err, result, fileds) => {
     try {
@@ -28,9 +21,9 @@ exports.get = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("result of species data", result);
+        console.log("result of rescue type data", result);
         res.status(200).json({
-          message: "species data",
+          message: "rescue type data",
           status: 200,
           success: true,
           data: result,
@@ -49,18 +42,22 @@ exports.get = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     let { body } = req;
-    let { name, created_by, rescue_type_id } = body;
+    let { name, mob_no, alt_mob_no, address, created_by } = body;
 
     const statement = `INSERT INTO ${TABLE_NAME} (
-      name, 
-      rescue_type_id,
+      name,
+      mob_no,
+      alt_mob_no,
+      address,
       created_by,
       updated_by,
-      created_at, 
+      created_at,
       updated_at
       ) values(
         '${name}',
-        ${rescue_type_id},
+        ${mob_no},
+        ${alt_mob_no},
+        '${address}',
         ${created_by},
         ${created_by},
         '${moment().format("YYYY-MM-DD HH:mm:ss")}', 
@@ -78,7 +75,7 @@ exports.create = async (req, res) => {
       } else if (result) {
         res.status(200).json({
           status: 200,
-          message: "Species added successfuly",
+          message: "Rescue type added successfuly",
           success: true,
           data: result[0],
         });
@@ -97,11 +94,10 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     let { body } = req;
-    let { name, id, updated_by, rescue_type_id } = body;
+    let { name, id, updated_by } = body;
 
     const statement = `UPDATE ${TABLE_NAME} set 
     name = '${name}', 
-    rescue_type_id = ${rescue_type_id}, 
     updated_by = ${updated_by},
     updated_at = '${moment().format("YYYY-MM-DD HH:mm:ss")}' where id = ${id}`;
 
@@ -116,7 +112,7 @@ exports.update = async (req, res) => {
       } else if (result) {
         res.status(200).json({
           status: 200,
-          message: "Species updated successfuly",
+          message: "Rescue type updated successfuly",
           success: true,
           data: result[0],
         });
@@ -150,7 +146,7 @@ exports.delete = async (req, res) => {
       } else if (result) {
         res.status(200).json({
           status: 200,
-          message: "Species deleted successfuly",
+          message: "Rescue type deleted successfuly",
           success: true,
           data: result[0],
         });
