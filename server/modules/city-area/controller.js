@@ -10,13 +10,13 @@ exports.get = async (req, res) => {
   tu.name as updated_by,
   tca.created_at as created_at,
   tca.updated_at as updated_at,
-  ts.name as city_name
+  ts.name as city_name,
+  ts.id as city_id
   FROM tolfa_city_area as tca 
   INNER JOIN tolfa_user as tu on tu.id = tca.updated_by
   INNER JOIN tolfa_user as itu on itu.id = tca.created_by 
   INNER JOIN tolfa_city as ts on ts.id = tca.city_id`;
 
-  console.log("statement", statement);
   pool.query(statement, (err, result, fileds) => {
     try {
       if (err) {
@@ -27,7 +27,6 @@ exports.get = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("records found", result);
         res.status(200).json({
           message: "record found",
           status: 200,

@@ -9,7 +9,7 @@ exports.login = async (req, res, next) => {
   const TABLE_NAME = "tolfa_user";
 
   let statement = `SELECT *, COUNT(*) AS cnt FROM ${TABLE_NAME} WHERE phone_no = ${phone_no} AND password = '${password}'`;
-  console.log("statement", statement);
+
   pool.query(statement, (err, result, fields) => {
     try {
       if (result[0].cnt > 0) {
@@ -47,7 +47,7 @@ exports.deleteUser = async (req, res, next) => {
   try {
     const { body } = req;
     const { user_id } = body;
-    console.log("user_id", user_id);
+
     const statement = `DELETE FROM dog_user WHERE ID = ${user_id}`;
     pool.query(statement, (error, result, fields) => {
       if (error) {
@@ -58,7 +58,7 @@ exports.deleteUser = async (req, res, next) => {
         });
         return;
       }
-      console.log("result", result);
+
       if (result) {
         res.status(422).json({
           message: "User deleted",

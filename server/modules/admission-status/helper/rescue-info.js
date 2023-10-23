@@ -6,14 +6,12 @@ const TABLE_NAME = "tolfa_rescue_info";
 exports.getRescueNumber = async (req, res) => {
   try {
     const statement = `SELECT MAX(rescue_number) as count FROM ${TABLE_NAME};`;
-    console.log("statement->>>>", statement);
     let result = new Promise((resolve, reject) => {
       pool.query(statement, (err, data) => {
         if (err) {
           console.log("rollback");
           reject(err);
         } else {
-          console.log("data", data);
           resolve(data);
         }
       });

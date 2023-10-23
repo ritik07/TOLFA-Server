@@ -16,7 +16,6 @@ exports.get = async (req, res) => {
   INNER JOIN tolfa_user as itu on itu.id = tas.created_by, (SELECT @row_number:=0) as rn
   WHERE tas.active = true
   ORDER BY tas.id`;
-  console.log("statement", statement);
   pool.query(statement, (err, result, fileds) => {
     try {
       if (err) {
@@ -27,7 +26,6 @@ exports.get = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("animal status data", result);
         res.status(200).json({
           message: "animal status data",
           status: 200,
@@ -125,8 +123,6 @@ exports.create = async (req, res) => {
           .map((nameId) => `(${rescue_id}, ${nameId})`)
           .join(", ");
 
-        console.log(values);
-
         await mapTolfaTeam(connection, { values });
       } else {
         const care_people_id = body.care_people_id;
@@ -183,8 +179,6 @@ exports.create = async (req, res) => {
         rassi_no,
         created_by,
       });
-
-      console.log("rescue_id", rescue_id);
 
       /**
        * @last call below
@@ -309,7 +303,6 @@ const mapTolfaTeam = async (connection, data) => {
           console.log("rollback");
           reject(err);
         } else {
-          console.log("data", data.insertId);
           resolve(data.insertId);
         }
       });
@@ -338,7 +331,6 @@ const mapCarePeople = async (connection, data) => {
           console.log("rollback");
           reject(err);
         } else {
-          console.log("data", data.insertId);
           resolve(data.insertId);
         }
       });

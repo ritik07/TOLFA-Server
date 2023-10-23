@@ -12,7 +12,7 @@ exports.getUsers = async (req, res) => {
   if (id) {
     statement = `SELECT * FROM ${TABLE_NAME} where id = ${id}`;
   }
-  console.log("statement", statement);
+
   pool.query(statement, (err, result, fileds) => {
     try {
       if (err) {
@@ -23,7 +23,7 @@ exports.getUsers = async (req, res) => {
         });
         return;
       } else if (result && result.length) {
-        console.log("result of role type data", result);
+
         const getUserRoles = async () => {
           if (id) {
             await helper.getRolesByUser(result[0].id, res, result);

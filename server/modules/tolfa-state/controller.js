@@ -16,7 +16,7 @@ exports.get = async (req, res) => {
   INNER JOIN tolfa_user as itu on itu.id = ts.created_by, (SELECT @row_number:=0) as rn
   WHERE ts.active = true
   ORDER BY ts.id`;
-  console.log("statement", statement);
+
   pool.query(statement, (err, result, fileds) => {
     try {
       if (err) {
@@ -27,7 +27,6 @@ exports.get = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("result of state data", result);
         res.status(200).json({
           message: "state data",
           status: 200,

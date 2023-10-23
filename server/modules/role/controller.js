@@ -24,7 +24,6 @@ exports.getRoles = async (req, res) => {
   WHERE tr.active = true
   ORDER BY tr.id`;
 
-  console.log("statement", statement);
   pool.query(statement, (err, result, fileds) => {
     try {
       if (err) {
@@ -35,7 +34,6 @@ exports.getRoles = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("result of role type data", result);
         res.status(200).json({
           message: "role type data",
           status: 200,

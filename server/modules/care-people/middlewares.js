@@ -8,7 +8,6 @@ exports.duplicate = async (req, res, next) => {
     let { mob_no } = body;
 
     const statement = `SELECT * FROM ${TABLE_NAME} WHERE mob_no = '${mob_no}'`;
-    console.log(statement);
     const query = (statement) => {
       pool.query(statement, (error, results, fields) => {
         console.log("results", results);

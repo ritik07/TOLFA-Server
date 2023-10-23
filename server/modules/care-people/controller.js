@@ -10,7 +10,7 @@ exports.get = async (req, res) => {
   } else {
     statement = `Select * from ${TABLE_NAME}`;
   }
-  console.log("statement", statement);
+
   pool.query(statement, (err, result, fileds) => {
     try {
       if (err) {
@@ -21,7 +21,6 @@ exports.get = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("result of rescue type data", result);
         res.status(200).json({
           message: "rescue type data",
           status: 200,

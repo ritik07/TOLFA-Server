@@ -16,7 +16,7 @@ exports.get = async (req, res) => {
   INNER JOIN tolfa_user as itu on itu.id = tas.created_by, (SELECT @row_number:=0) as rn
   WHERE tas.active = true
   ORDER BY tas.id`;
-  console.log("statement", statement);
+
   pool.query(statement, (err, result, fileds) => {
     try {
       if (err) {
@@ -27,7 +27,6 @@ exports.get = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("animal status data", result);
         res.status(200).json({
           message: "animal status data",
           status: 200,
@@ -63,7 +62,6 @@ exports.create = async (req, res) => {
         '${moment().format("YYYY-MM-DD HH:mm:ss")}', 
         '${moment().format("YYYY-MM-DD HH:mm:ss")}'
         )`;
-    console.log("statement", statement);
     pool.query(statement, (err, result, fileds) => {
       if (err) {
         res.status(500).json({

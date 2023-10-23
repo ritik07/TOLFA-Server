@@ -17,7 +17,6 @@ exports.get = async (req, res) => {
   INNER JOIN tolfa_user as itu on itu.id = ts.created_by 
   INNER JOIN tolfa_rescue_type as trt on trt.id = ts.rescue_type_id`;
 
-  console.log("statement", statement);
   pool.query(statement, (err, result, fileds) => {
     try {
       if (err) {
@@ -28,7 +27,6 @@ exports.get = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("result of species data", result);
         res.status(200).json({
           message: "species data",
           status: 200,

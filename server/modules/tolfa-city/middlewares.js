@@ -6,7 +6,6 @@ exports.duplicate = async (req, res, next) => {
     let { name, state_id } = body;
 
     const statement = `SELECT * FROM tolfa_city WHERE name = '${name}' AND 	state_id = ${state_id}`;
-    console.log(statement);
     const query = (statement) => {
       pool.query(statement, (error, results, fields) => {
         console.log("results", results);

@@ -5,7 +5,6 @@ const TABLE_NAME = "test";
 exports.getTestData = async (req, res) => {
   let statement = `SELECT * FROM ${TABLE_NAME}`;
 
-  console.log("statement", statement);
   pool.query(statement, (err, result) => {
     try {
       if (err) {
@@ -16,7 +15,6 @@ exports.getTestData = async (req, res) => {
         });
         return;
       } else if (result) {
-        console.log("result of role type data", result);
         res.status(200).json({
           data: result,
         });

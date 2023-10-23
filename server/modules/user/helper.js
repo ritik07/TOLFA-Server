@@ -3,7 +3,6 @@ const pool = require("../../../database");
 exports.getRolesByUser = async (user_id, res, data) => {
   let statement = `SELECT * FROM tolfa_role as TR INNER JOIN tolfa_user_role AS TUR on TUR.role_id = TR.id where TUR.user_id = ${user_id}`;
 
-  console.log("statement", statement);
   pool.query(statement, (err, result, fileds) => {
     try {
       let roles = result.map((x) => x.name);
@@ -37,9 +36,7 @@ exports.getRolesByUser = async (user_id, res, data) => {
 exports.getAllUser = async (user_id, res, data, id) => {
   try {
     let statement = `SELECT * FROM tolfa_role as TR INNER JOIN tolfa_user_role AS TUR on TUR.role_id = TR.id`;
-    console.log("statement", statement);
     pool.query(statement, (err, result, fileds) => {
-      console.log("result", result);
       if (result && result.length) {
         data.forEach((user) => {
           user.user_role = [];
