@@ -174,7 +174,7 @@ exports.get = async (req, res) => {
     LEFT JOIN tolfa_city_area tarea ON tas.area_id = tarea.id
     LEFT JOIN tolfa_animal_breed tbreed ON tas.breed_id = tbreed.id
     LEFT JOIN tolfa_block_number tbn ON trl.tolfa_block_id = tbn.id
-    LEFT JOIN tolfa_area ta ON tas.area_id = ta.id
+    LEFT JOIN tolfa_area ta ON trl.tolfa_area_id = ta.id
   GROUP BY tas.id
 `;
 
@@ -205,6 +205,152 @@ exports.get = async (req, res) => {
       });
     }
   });
+};
+
+exports.historyLogsTolfaLocation = async (req, res) => {
+  try {
+    const { rescue_id } = req.params;
+
+    const statement = `SELECT 
+    trl.*, 
+    ta.name AS area_name,
+    tbn.name AS block_name
+    FROM tolfa_rescue_location trl
+    LEFT JOIN tolfa_area ta ON trl.tolfa_area_id = ta.id
+    LEFT JOIN tolfa_block_number tbn ON trl.tolfa_block_id = tbn.id
+    WHERE trl.rescue_id = ${rescue_id}
+    ORDER BY trl.updated_at DESC;`;
+
+    pool.query(statement, (err, result, fields) => {
+      try {
+        if (err) {
+          res.status(500).json({
+            status: 500,
+            message: err,
+            success: false,
+          });
+          return;
+        } else if (result) {
+          res.status(200).json({
+            message: "data fetch successfully",
+            status: 200,
+            success: true,
+            data: result,
+          });
+        }
+      } catch (error) {
+        res.status(500).json({
+          message: "Ops something went wrong",
+          status: 500,
+          success: false,
+        });
+      }
+    });
+  } catch (error) {
+    console.log("err", error);
+    res.status(500).json({
+      message: "Ops something went wrong",
+      status: 500,
+      success: false,
+    });
+  }
+};
+
+exports.updateRescueLocation = async (req, res) => {
+  pool.getConnection(async function (err, connection) {
+    if (err) throw err; // not connected!
+
+    try {
+      const {
+        rescue_id,
+        tolfa_area_id,
+        tolfa_block_id,
+        created_by,
+        // Add other columns here
+      } = req.body;
+
+      /**
+       * @startTransaction
+       */
+      connection.beginTransaction();
+
+      // trans
+      const updateResponse = await updateTolfaLocationLastestKey(connection, {
+        rescue_id,
+      });
+
+      const insertUpdateTolfaLocationResponse = insertUpdateTolfaLocation(
+        connection,
+        { tolfa_area_id, tolfa_block_id, rescue_id, created_by }
+      );
+      connection.commit();
+
+      res.status(201).json({
+        message: "Tolfa location updated successfully",
+        success: true,
+      });
+    } catch (error) {
+      console.error(error);
+      connection.rollback();
+      res.status(500).json({
+        message: "Oops! Something went wrong",
+        success: false,
+      });
+    }
+  });
+};
+
+const updateTolfaLocationLastestKey = async (connection, data) => {
+  const { rescue_id } = data;
+  try {
+    const updateStatement = `UPDATE tolfa_rescue_location SET is_latest = 0 WHERE rescue_id = ${rescue_id}`;
+
+    return new Promise((resolve, reject) => {
+      connection.query(updateStatement, (err, data) => {
+        if (err) {
+          console.log("rollback");
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  } catch (error) {
+    console.log("error", error);
+    throw error;
+  }
+};
+
+const insertUpdateTolfaLocation = async (connection, data) => {
+  try {
+    const { tolfa_area_id, tolfa_block_id, rescue_id, created_by } = data;
+    const tolfaLocationDetailStatement = `INSERT INTO tolfa_rescue_location (rescue_id, tolfa_area_id, tolfa_block_id, created_at, updated_at, created_by, updated_by, is_latest)
+    VALUES (
+      ${rescue_id}, 
+      ${tolfa_area_id}, 
+      ${tolfa_block_id},  
+      '${moment().format("YYYY-MM-DD HH:mm:ss")}',  
+      '${moment().format("YYYY-MM-DD HH:mm:ss")}', 
+      ${created_by}, 
+      ${created_by}, 
+      1
+      );`;
+
+    return new Promise((resolve, reject) => {
+      connection.query(tolfaLocationDetailStatement, (err, data) => {
+        if (err) {
+          console.log("rollback");
+          reject(err);
+        } else {
+          console.log("data", data.insertId);
+          resolve(data.insertId);
+        }
+      });
+    });
+  } catch (error) {
+    console.log("error", error);
+    throw error;
+  }
 };
 
 exports.create = async (req, res) => {
@@ -565,7 +711,7 @@ const tolfaRescueAnimalStatus = async (connection, data) => {
       rassi_no,
       created_by,
     } = data;
-    console.log("debugg", injury_location === "undefined");
+
     const tolfaAnimalStatusStatement = `INSERT INTO tolfa_rescue_animal_status (
       rescue_id,
       status_id,

@@ -17,4 +17,19 @@ router.put("/delete", controller.delete);
 /* GET latest rescue number */
 router.get("/get-lastest-rescue-number", rescueInfo.getRescueNumber);
 
+/**
+ * @tolfa_location
+ */
+
+/* Update rescue location */
+router.post("/update/rescue-location", controller.updateRescueLocation);
+
+/**
+ * @history_logs
+ */
+router.get(
+  "/history-logs/rescue-location/:rescue_id",
+  controller.historyLogsTolfaLocation
+);
+
 module.exports = router;
