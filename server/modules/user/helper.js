@@ -63,7 +63,7 @@ exports.getAllUser = async (user_id, res, data, id) => {
           message: "Tolfa staff data",
           status: 200,
           success: true,
-          data: { data },
+          data: [...data],
         });
       }
     });

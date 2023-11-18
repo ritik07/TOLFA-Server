@@ -1,13 +1,14 @@
 const express = require("express");
 const controller = require("./controller");
 const rescueInfo = require("./helper/rescue-info");
+const { postFile } = require("../utils/mutler.service");
 
 const router = express.Router();
 
 /* GET */
 router.get("/", controller.get);
 /* CREATE */
-router.post("/create", controller.create );
+router.post("/create", postFile, controller.create);
 /* UPDATE */
 router.put("/update", controller.update);
 /* DELETE */

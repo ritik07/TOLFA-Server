@@ -10,7 +10,6 @@ exports.duplicate = async (req, res, next) => {
     const statement = `SELECT * FROM ${TABLE_NAME} WHERE mob_no = '${mob_no}'`;
     const query = (statement) => {
       pool.query(statement, (error, results, fields) => {
-        console.log("results", results);
         if (results && results.length) {
           res.status(422).json({
             message: "Data already exist with this mob_no",

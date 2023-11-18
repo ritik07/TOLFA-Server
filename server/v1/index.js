@@ -35,7 +35,7 @@ router.use("/city-area", authMiddleware.verifyToken, cityArea);
 router.use("/area", authMiddleware.verifyToken, area);
 router.use("/block-number", authMiddleware.verifyToken, blockNumber);
 
-router.use("/admission-status", authMiddleware.verifyToken, admissionStatus);
+router.use("/admission", authMiddleware.verifyToken, admissionStatus);
 router.use("/care-people", authMiddleware.verifyToken, carePeople);
 
 router.use("/role", authMiddleware.verifyToken, role);

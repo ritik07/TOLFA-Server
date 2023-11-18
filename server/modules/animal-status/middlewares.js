@@ -8,7 +8,6 @@ exports.duplicateData = async (req, res, next) => {
     const statement = `SELECT * FROM tolfa_animal_status WHERE name = '${name}'`;
     const query = (statement) => {
       pool.query(statement, (error, results, fields) => {
-        console.log("results", results);
         if (results && results.length) {
           res.status(422).json({
             message: "Data already exist with this name",
