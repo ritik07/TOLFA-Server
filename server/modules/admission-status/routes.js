@@ -24,12 +24,15 @@ router.get("/get-lastest-rescue-number", rescueInfo.getRescueNumber);
 /* Update rescue location */
 router.post("/update/rescue-location", controller.updateRescueLocation);
 
-/**
- * @history_logs
- */
+/** history_logs */
 router.get(
   "/history-logs/rescue-location/:rescue_id",
   controller.historyLogsTolfaLocation
 );
+
+/**
+ * @tolfa_rescue_animal_status
+ */
+router.post("/update/rescue-animal-status", controller.updateRescueAnimalStatus);
 
 module.exports = router;

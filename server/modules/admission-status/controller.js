@@ -256,6 +256,12 @@ exports.historyLogsTolfaLocation = async (req, res) => {
   }
 };
 
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ */
+
 exports.updateRescueLocation = async (req, res) => {
   pool.getConnection(async function (err, connection) {
     if (err) throw err; // not connected!
@@ -338,6 +344,220 @@ const insertUpdateTolfaLocation = async (connection, data) => {
 
     return new Promise((resolve, reject) => {
       connection.query(tolfaLocationDetailStatement, (err, data) => {
+        if (err) {
+          console.log("rollback");
+          reject(err);
+        } else {
+          console.log("data", data.insertId);
+          resolve(data.insertId);
+        }
+      });
+    });
+  } catch (error) {
+    console.log("error", error);
+    throw error;
+  }
+};
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ */
+
+exports.updateRescueAnimalStatus = async (req, res) => {
+  pool.getConnection(async function (err, connection) {
+    if (err) throw err; // not connected!
+
+    try {
+      const {
+        rescue_id,
+        status_id,
+        abc_status,
+        tattoo_number,
+        condition_value,
+        body_score,
+        caregiver_name,
+        caregiver_number,
+        problem,
+        problem_type,
+        symptoms,
+        injury_location,
+        alt_problem,
+        alt_problem_type,
+        alt_symptoms,
+        alt_injury_location,
+        cause_of_problem,
+        rassi_no,
+        created_by,
+        // Add other columns here
+      } = req.body;
+
+      /**
+       * @startTransaction
+       */
+      connection.beginTransaction();
+
+      // trans
+      const updateResponse = await updateRescueAnimalStatusKey(connection, {
+        rescue_id,
+      });
+      console.log("rescue_id", rescue_id);
+      const insertUpdateTolfaLocationResponse = insertUpdateRescueAnimalStatus(
+        connection,
+        {
+          rescue_id,
+          status_id,
+          abc_status,
+          tattoo_number,
+          condition_value,
+          body_score,
+          caregiver_name,
+          caregiver_number,
+          problem,
+          problem_type,
+          symptoms,
+          injury_location,
+          alt_problem,
+          alt_problem_type,
+          alt_symptoms,
+          alt_injury_location,
+          cause_of_problem,
+          rassi_no,
+          created_by,
+        }
+      );
+      console.log(
+        "insertUpdateTolfaLocationResponse",
+        insertUpdateTolfaLocationResponse
+      );
+      connection.commit();
+
+      res.status(201).json({
+        message: "Tolfa location updated successfully",
+        success: true,
+      });
+    } catch (error) {
+      console.error(error);
+      connection.rollback();
+      res.status(500).json({
+        message: "Oops! Something went wrong",
+        success: false,
+      });
+    }
+  });
+};
+
+const updateRescueAnimalStatusKey = async (connection, data) => {
+  const { rescue_id } = data;
+  try {
+    const updateStatement = `UPDATE tolfa_rescue_animal_status SET is_latest = 0 WHERE rescue_id = ${rescue_id}`;
+
+    return new Promise((resolve, reject) => {
+      connection.query(updateStatement, (err, data) => {
+        if (err) {
+          console.log("rollback");
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  } catch (error) {
+    console.log("error", error);
+    throw error;
+  }
+};
+
+const insertUpdateRescueAnimalStatus = async (connection, data) => {
+  try {
+    const {
+      status_id,
+      rescue_id,
+      abc_status,
+      tattoo_number,
+      condition_value,
+      body_score,
+      caregiver_name,
+      caregiver_number,
+      problem,
+      problem_type,
+      symptoms,
+      injury_location,
+      alt_problem,
+      alt_problem_type,
+      alt_symptoms,
+      alt_injury_location,
+      cause_of_problem,
+      rassi_no,
+      created_by,
+    } = data;
+
+    const tolfaAnimalStatusStatement = `INSERT INTO tolfa_rescue_animal_status (
+      rescue_id,
+      status_id,
+      abc_status,
+      tattoo_number,
+      condition_value,
+      body_score,
+      caregiver_name,
+      caregiver_number,
+      problem,
+      problem_type,
+      symptoms,
+      injury_location,
+      alt_problem,
+      alt_problem_type,
+      alt_symptoms,
+      alt_injury_location,
+      cause_of_problem,
+      rassi_no,
+      created_at,
+      updated_at,
+      created_by,
+      updated_by,
+      is_latest
+    ) VALUES (
+      ${rescue_id},
+      ${status_id},
+      '${abc_status}',
+      '${tattoo_number}',
+      '${condition_value}',
+      '${body_score}',
+      '${caregiver_name}',
+      ${caregiver_number},
+      '${problem}',
+      ${JSON.stringify(problem_type)},
+      ${symptoms ? `${JSON.stringify(symptoms)}` : null},
+      ${
+        injury_location && injury_location !== "undefined"
+          ? `'${JSON.stringify(injury_location)}'`
+          : null
+      },
+      '${alt_problem}',
+      '${JSON.stringify(alt_problem_type)}',
+      ${
+        alt_symptoms && alt_symptoms !== "undefined"
+          ? `${JSON.stringify(alt_symptoms)}`
+          : null
+      },
+      ${
+        alt_injury_location && alt_injury_location !== "undefined"
+          ? `${JSON.stringify(alt_injury_location)}`
+          : null
+      },
+      '${cause_of_problem}',
+      '${rassi_no}',
+      '${moment().format("YYYY-MM-DD HH:mm:ss")}',  
+      '${moment().format("YYYY-MM-DD HH:mm:ss")}', 
+      ${created_by},
+      ${created_by},
+      1
+    );`;
+
+    console.log(tolfaAnimalStatusStatement);
+
+    return new Promise((resolve, reject) => {
+      connection.query(tolfaAnimalStatusStatement, (err, data) => {
         if (err) {
           console.log("rollback");
           reject(err);
