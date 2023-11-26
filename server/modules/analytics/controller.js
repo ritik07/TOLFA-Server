@@ -11,9 +11,33 @@ exports.totalRescueByCity = async (req, res) => {
     `;
 
   try {
-    const result = await pool.query(statement);
-    res.status(200).json(result);
+    pool.query(statement, (err, result, fileds) => {
+      try {
+        if (err) {
+          res.status(500).json({
+            status: 500,
+            message: err,
+            success: false,
+          });
+          return;
+        } else if (result) {
+          res.status(200).json({
+            message: "Record found",
+            status: 200,
+            success: true,
+            data: result,
+          });
+        }
+      } catch (error) {
+        res.status(500).json({
+          message: "Ops something went wrong",
+          status: 500,
+          success: false,
+        });
+      }
+    });
   } catch (error) {
+    console.log("error", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -43,8 +67,31 @@ exports.mostFrequestProblem = async (req, res) => {
 `;
 
   try {
-    const result = await pool.query(statement);
-    res.status(200).json(result);
+    pool.query(statement, (err, result, fileds) => {
+      try {
+        if (err) {
+          res.status(500).json({
+            status: 500,
+            message: err,
+            success: false,
+          });
+          return;
+        } else if (result) {
+          res.status(200).json({
+            message: "Record found",
+            status: 200,
+            success: true,
+            data: result,
+          });
+        }
+      } catch (error) {
+        res.status(500).json({
+          message: "Ops something went wrong",
+          status: 500,
+          success: false,
+        });
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
