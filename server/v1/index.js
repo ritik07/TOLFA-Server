@@ -13,6 +13,7 @@ const area = require("../modules/area");
 const blockNumber = require("../modules/block-number");
 const admissionStatus = require("../modules/admission-status");
 const carePeople = require("../modules/care-people");
+const analytics = require("../modules/analytics");
 
 const test = require("../modules/test");
 const auth = require("../modules/auth");
@@ -34,6 +35,8 @@ router.use("/city-area", authMiddleware.verifyToken, cityArea);
 
 router.use("/area", authMiddleware.verifyToken, area);
 router.use("/block-number", authMiddleware.verifyToken, blockNumber);
+
+router.use("/analytics", authMiddleware.verifyToken, analytics);
 
 router.use("/admission", authMiddleware.verifyToken, admissionStatus);
 router.use("/care-people", authMiddleware.verifyToken, carePeople);
