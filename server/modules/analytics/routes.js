@@ -13,6 +13,11 @@ router.get("/total-rescues-by-month", controller.totalRescuesByMonths);
 
 router.get("/most-frequent-problems", controller.mostFrequestProblem);
 
+router.get(
+  "/most-frequent-problems-types",
+  controller.mostFrequentProblemTypes
+);
+
 router.get("/rescues-by-age-group", controller.rescueByAgeGroup);
 
 router.get("/rescues-by-gender", controller.rescueByGender);

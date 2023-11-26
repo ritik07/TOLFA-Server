@@ -191,3 +191,38 @@ exports.rescueByGender = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+exports.mostFrequentProblemTypes = (req, res) => {
+  const statement = `
+    SELECT rs.problem_type, COUNT(tas.id) AS total_cases
+    FROM tolfa_admission_status tas
+    LEFT JOIN tolfa_rescue_animal_status rs ON tas.id = rs.rescue_id
+    GROUP BY rs.problem_type
+  `;
+
+  pool.query(statement, (err, result, fields) => {
+    try {
+      if (err) {
+        res.status(500).json({
+          status: 500,
+          message: err,
+          success: false,
+        });
+        return;
+      } else if (result) {
+        res.status(200).json({
+          message: "Record found",
+          status: 200,
+          success: true,
+          data: result,
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Ops something went wrong",
+        status: 500,
+        success: false,
+      });
+    }
+  });
+};
