@@ -1,6 +1,10 @@
 const pool = require("../../../database");
 const moment = require("moment");
 const TABLE_NAME = "tolfa_species";
+const { TolfaSpecies } = require("./model/species-type.model");
+const { decodeToken } = require("../../middleware/auth.middleware");
+
+const tolfaSpeciesInit = new TolfaSpecies();
 
 exports.get = async (req, res) => {
   const statement = `SELECT 
@@ -160,6 +164,44 @@ exports.delete = async (req, res) => {
       message: "Ops something went wrong",
       status: 500,
       success: false,
+    });
+  }
+};
+
+/**
+ * @migration - Sequelize
+ */
+
+exports.updateById = async (req, res) => {
+  try {
+    let data = req.body;
+    let token = req.headers.auth_token;
+    let userToken = await decodeToken(token);
+    let payload = {
+      ...data,
+      updated_at: undefined,
+      updated_by: userToken.id,
+    };
+    let updatedData = await tolfaSpeciesInit.updateTolfaSpecies(
+      data.id,
+      payload
+    );
+
+    if (tolfaSpeciesInit) {
+      res.status(200).json({
+        message: "user fetched",
+        data: { ...updatedData },
+      });
+    } else {
+      res.status(400).json({
+        message: "BAD REQUEST",
+      });
+    }
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({
+      message: "Something went wrong",
+      error: error,
     });
   }
 };

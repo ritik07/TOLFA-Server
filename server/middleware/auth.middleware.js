@@ -16,3 +16,15 @@ exports.verifyToken = async (req, res, next) => {
     }
   });
 };
+
+exports.decodeToken = async (token) => {
+  let decodedValue = null;
+  jwt.verify(token, secret, function (err, decoded) {
+    if (!err) {
+      decodedValue = decoded;
+    } else {
+      throw err;
+    }
+  });
+  return decodedValue;
+};

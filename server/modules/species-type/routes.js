@@ -9,7 +9,7 @@ router.get("/", controller.get);
 /* CREATE */
 router.post("/create", middlewares.duplicateRescueType, controller.create);
 /* UPDATE */
-router.put("/update", controller.update);
+router.put("/update", controller.updateById);
 /* DELETE */
 router.put("/delete", controller.delete);
 

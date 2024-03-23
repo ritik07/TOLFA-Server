@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const v1Routes = require("./server/v1");
+require("./database/sequelize")
 
 app.use(express.static("file"));
 

@@ -13,7 +13,7 @@ exports.login = async (req, res, next) => {
   pool.query(statement, (err, result, fields) => {
     try {
       if (result[0].cnt > 0) {
-        var token = jwt.sign({ phone_no: phone_no }, secret, {
+        var token = jwt.sign({ phone_no: phone_no, id: result[0].id }, secret, {
           expiresIn: 186400,
           // expiresIn: 3600,
         });
